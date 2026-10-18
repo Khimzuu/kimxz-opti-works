@@ -1,31 +1,20 @@
-# kim.xz opti works
+# kim.xz opti works v2 — Desktop GUI (Windows 10/11)
 
-Windows 10/11 maintenance utility with a PowerShell menu. Requires Windows PowerShell 5.1+.
+A local-only Windows Forms interface for Windows PowerShell 5.1.
 
-## Start from GitHub
+## Run
+1. Extract the entire ZIP into a folder.
+2. Double-click `Launch-kim.xz-GUI.bat`.
+3. Choose a maintenance action. Actions requiring administrator rights request a UAC prompt when necessary.
+4. The selected action runs in a separate console and writes a log to `%LOCALAPPDATA%\kim.xz-opti-works\logs`.
 
-Review the source first. After publishing to a public repository with your GitHub username:
+## Files
+- `kimxz-gui.ps1` — desktop UI
+- `kimxz-actions.ps1` — action runner
+- `Launch-kim.xz-GUI.bat` — launcher
+- `legacy-console.ps1` — original terminal version for reference
 
-```powershell
-irm https://raw.githubusercontent.com/YOUR_USERNAME/kimxz-opti-works/main/win.ps1 | iex
-```
+## Important
+No downloads or telemetry. Windows security settings are not disabled. A performance preset is not a guaranteed FPS increase. Running temp cleanup could remove older temporary files still needed by running applications. Emptying the Recycle Bin is irreversible. A network reset can disrupt VPNs and custom IP configurations. Test on a noncritical Windows machine and inspect all scripts before use. Actual Windows execution was not available in the build environment.
 
-This runs live code from the GitHub `main` branch. **For reproducible and safer execution**, review a particular commit and use its immutable raw URL (replace `COMMIT_SHA`):
-
-```powershell
-irm https://raw.githubusercontent.com/YOUR_USERNAME/kimxz-opti-works/COMMIT_SHA/win.ps1 | iex
-```
-
-**Do not run unreviewed scripts as administrator.** Some menu commands require elevation and prompt separately for confirmation. The startup command does not automatically elevate. No measurable FPS benefit is guaranteed.
-
-## Offline use
-
-Download or clone this repository. Run `Launch-kim.xz-opti.bat`, optionally as administrator for SFC, DISM, networking repair, and other admin actions. The batch file runs `kim.xz-opti.ps1` locally without bypassing execution policy.
-
-## Logs and changes
-
-Session logs and settings backups are stored under `%LOCALAPPDATA%\kim.xz-opti-works`. Registry backup exports only HKCU and is not a complete system backup. Resetting networking can disrupt connectivity, and power-plan changes can increase heat and power usage. See prompts shown before each consequential change.
-
-## Validation status
-
-Reviewed statically; Windows runtime test **not yet performed**. Test on a disposable Windows VM before promoting it for public, administrator-level use.
+To publish on GitHub, upload these files in your repository. The current `irm .../win.ps1 | iex` still launches V1 until you deliberately change `win.ps1`. For GUI deployment, **do not** pipe the GUI source into `iex` because its adjacent action file is required; distribute a versioned ZIP and verify a hash.
