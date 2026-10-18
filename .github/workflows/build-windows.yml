@@ -1,0 +1,66 @@
+
+name: Build kim.xz OPTI WORKS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "frontend/**"
+      - "backend/**"
+      - "assets/**"
+      - ".github/workflows/build-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Build Windows x64 application
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish self-contained application
+        shell: pwsh
+        run: |
+          dotnet publish src/KimXZ.OptiWorks/KimXZ.OptiWorks.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:EnableWindowsTargeting=true `
+            --output publish
+
+      - name: Include application resources
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path publish/frontend, publish/backend, publish/assets | Out-Null
+          Copy-Item frontend/* publish/frontend/ -Recurse -Force
+          Copy-Item backend/* publish/backend/ -Recurse -Force
+          Copy-Item assets/* publish/assets/ -Recurse -Force
+
+      - name: Package Windows application
+        shell: pwsh
+        run: |
+          Compress-Archive -Path publish/* -DestinationPath kimxz-opti-works-v1.04-win-x64.zip -Force
+          Get-FileHash kimxz-opti-works-v1.04-win-x64.zip -Algorithm SHA256 |
+            Format-List |
+            Out-File kimxz-opti-works-v1.04-win-x64.sha256.txt
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: kimxz-opti-works-v1.04-win-x64
+          path: |
+            kimxz-opti-works-v1.04-win-x64.zip
+            kimxz-opti-works-v1.04-win-x64.sha256.txt
+          retention-days: 30
